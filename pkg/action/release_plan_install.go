@@ -63,6 +63,7 @@ type ReleasePlanInstallOptions struct {
 	LegacyExtraValues            map[string]interface{}
 	LogRegistryStreamOut         io.Writer
 	NetworkParallelism           int
+	NoHooks                      bool
 	NoInstallCRDs                bool
 	RegistryCredentialsPath      string
 	ReleaseStorageDriver         string
@@ -296,6 +297,7 @@ func releasePlanInstall(ctx context.Context, releaseName, releaseNamespace strin
 		resourceinfo.DeployableResourcesProcessorOptions{
 			NetworkParallelism: opts.NetworkParallelism,
 			ForceAdoption:      opts.ForceAdoption,
+			NoHooks:            opts.NoHooks,
 			ReleasableHookResourcePatchers: []resource.ResourcePatcher{
 				resource.NewExtraMetadataPatcher(opts.ExtraAnnotations, opts.ExtraLabels),
 			},
