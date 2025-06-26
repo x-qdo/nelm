@@ -45,6 +45,7 @@ func NewDeployableResourcesProcessor(
 		deployType:                        deployType,
 		releaseName:                       releaseName,
 		releaseNamespace:                  releaseNamespace,
+		noHooks:                           opts.NoHooks,
 		standaloneCRDs:                    standaloneCRDs,
 		hookResources:                     hookResources,
 		generalResources:                  generalResources,
@@ -68,6 +69,7 @@ func NewDeployableResourcesProcessor(
 
 type DeployableResourcesProcessorOptions struct {
 	NetworkParallelism                int
+	NoHooks                           bool
 	HookResourceTransformers          []resource.ResourceTransformer
 	GeneralResourceTransformers       []resource.ResourceTransformer
 	ReleasableHookResourcePatchers    []resource.ResourcePatcher
@@ -86,6 +88,7 @@ type DeployableResourcesProcessor struct {
 	deployType              common.DeployType
 	releaseName             string
 	releaseNamespace        string
+	noHooks                 bool
 	standaloneCRDs          []*resource.StandaloneCRD
 	hookResources           []*resource.HookResource
 	generalResources        []*resource.GeneralResource
@@ -501,6 +504,12 @@ func (p *DeployableResourcesProcessor) buildDeployableStandaloneCRDs(ctx context
 }
 
 func (p *DeployableResourcesProcessor) buildDeployableHookResources(ctx context.Context) error {
+	// If NoHooks is enabled, skip processing hooks entirely
+	if p.noHooks {
+		p.deployableHookResources = []*resource.HookResource{}
+		return nil
+	}
+
 	matchingHookResources := lo.Filter(p.hookResources, func(res *resource.HookResource, _ int) bool {
 		switch p.deployType {
 		case common.DeployTypeInitial, common.DeployTypeInstall:
