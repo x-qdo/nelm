@@ -507,7 +507,7 @@ func validateDeployDependencies(unstruct *unstructured.Unstructured) error {
 
 			properties, err := util.ParseProperties(context.TODO(), value)
 			if err != nil {
-				return fmt.Errorf("invalid value %q for annotation %q: %w", err)
+				return fmt.Errorf("invalid value %q for annotation %q: %w", value, key, err)
 			}
 
 			if !lo.Some(lo.Keys(properties), []string{"group", "version", "kind", "name", "namespace"}) {
@@ -527,7 +527,7 @@ func validateDeployDependencies(unstruct *unstructured.Unstructured) error {
 							return fmt.Errorf("invalid value %q for property %q, expected non-empty string value", pv, propKey)
 						}
 					case bool:
-						return fmt.Errorf("invalid boolean value %q for property %q, expected string value", pv, propKey)
+						return fmt.Errorf("invalid boolean value %v for property %q, expected string value", pv, propKey)
 					default:
 						panic(fmt.Sprintf("unexpected type %T for property %q", pv, propKey))
 					}
@@ -542,7 +542,7 @@ func validateDeployDependencies(unstruct *unstructured.Unstructured) error {
 							return fmt.Errorf("unknown value %q for property %q", pv, propKey)
 						}
 					case bool:
-						return fmt.Errorf("invalid boolean value %q for property %q, expected string value", pv, propKey)
+						return fmt.Errorf("invalid boolean value %v for property %q, expected string value", pv, propKey)
 					default:
 						panic(fmt.Sprintf("unexpected type %T for property %q", pv, propKey))
 					}
